@@ -1,11 +1,10 @@
-import express, { Express, Request, Response } from "express"
+import express, { Express } from "express"
+import routesInit from './routes'
+
 const app: Express = express()
 const port: string = process.env.PORT || "9000"
 
-app.get('/:year', (req: Request, res: Response) => {
-	const year = req.params['year']
-	res.send(`Hello world - ${year}`)
-})
+routesInit({ app })
 
 app.listen(port, () => {
 	console.log(`started listening on ${port}`)
