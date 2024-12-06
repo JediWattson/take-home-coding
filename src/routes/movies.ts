@@ -1,48 +1,45 @@
 import { Router, Request, Response } from 'express'
-import { MovieReqOptions, MovieQuery, MovieItem, CrewItem } from '../types' 
+import { MovieItem, CrewItem, MovieResData } from '../types' 
+import { movieUrl, movieReqOptions } from '../lib/constants'
+import { makeMovieQueryString } from '../lib/helpers'
 
 const router = Router()
-
-const options: MovieReqOptions = {
-  method: 'GET',
-  headers: {
-    accept: 'application/json',
-    Authorization: `Bearer ${process.env.MOVIEDB_TOKEN}`
-  }
-};
-
-const movieUrl = 'https://api.themoviedb.org/3/'
-const queryOpts: MovieQuery = {
-	language: 'en-US',
-	page: 1,
-	sort_by: "popularity.desc"
-}
-
-const makeQueryString = (year: string): string =>
-	Object.entries({ ...queryOpts, primary_release_year: year })
-		.map(([key, value]) => `${key}=${value}`)
-		.join("&")
 
 router.get('/:year', async (req: Request, res: Response) => {
 	try {
 		const year: string = req.params['year']
-		const movieRes = await fetch(`${movieUrl}discover/movie?${makeQueryString(year)}`, options)
+		const movieRes = await fetch(
+			`${movieUrl}discover/movie?${makeMovieQueryString(year)}`, 
+			movieReqOptions
+		)
 		const data = await movieRes.json();
-		const moviesPromises = data.results.map(async (item: MovieItem) => {
-			const editorsRes = await fetch(`${movieUrl}movie/${item.id}/credits?language=en-US`, options)
+		const moviesPromises = data.results.map(async (item: MovieItem): Promise<MovieResData> => {
+			const editorsRes = await fetch(
+				`${movieUrl}movie/${item.id}/credits?language=en-US`, 
+				movieReqOptions
+			)
+			
 			const editorsData = await editorsRes.json()
-			const editors = editorsData.crew
+			const editors: string[] = editorsData.crew
 				.filter((editor: CrewItem) => editor.known_for_department === 'Editing')
 				.map((editor: CrewItem) => editor.original_name)
 		
+			const date = new Date(item.release_date)
+			const options: Intl.DateTimeFormatOptions = {
+				timeZone: 'UTC',
+			  	year: 'numeric',
+				month: 'long',
+				day: 'numeric'
+			}
+			const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
 			return {
-				editors,
 				title: item.original_title,
-				releaseDate: item.release_date,
-				voterAverage: item.vote_average
+				vote_average: item.vote_average,
+				release_date: formattedDate,
+				editors
 			}
 		})
-		const movies = await Promise.all(moviesPromises)
+		const movies: MovieResData[] = await Promise.all(moviesPromises)
 		res.send(movies)
 	} catch(err) {
 		console.error(err)

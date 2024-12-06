@@ -7,7 +7,7 @@ export interface MovieReqOptions {
 }
 
 export interface MovieQuery {
-	language: string;
+	original_language: string;
 	page: number;
 	sort_by: string;
 }
@@ -23,5 +23,13 @@ export interface CrewItem {
 	original_name: string;
 	known_for_department: string;
 }
+
+export interface MovieResData {
+	title: string;
+	vote_average: number;
+	release_date: string;
+	editors: string[];
+}
+
 
 
