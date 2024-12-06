@@ -1,34 +1,9 @@
 import { Router, Request, Response } from 'express'
+import { MovieReqOptions, MovieQuery, MovieItem, CrewItem } from '../types' 
 
 const router = Router()
 
-type MovieItemType = {
-	id: string,
-	original_title: string,
-	release_date: string,
-	vote_average: number
-}
-
-type EditorItemType = {
-	original_name: string,
-	known_for_department: string
-}
-
-type MovieReqOptionsType = {
-	method: string,
-	headers: {
-		accept: string,
-		Authorization: string
-	}
-}
-
-type QueryOptsType = {
-	language: string,
-	page: number,
-	sort_by: string,
-}
-
-const options: MovieReqOptionsType = {
+const options: MovieReqOptions = {
   method: 'GET',
   headers: {
     accept: 'application/json',
@@ -37,7 +12,7 @@ const options: MovieReqOptionsType = {
 };
 
 const movieUrl = 'https://api.themoviedb.org/3/'
-const queryOpts: QueryOptsType = {
+const queryOpts: MovieQuery = {
 	language: 'en-US',
 	page: 1,
 	sort_by: "popularity.desc"
@@ -53,12 +28,12 @@ router.get('/:year', async (req: Request, res: Response) => {
 		const year: string = req.params['year']
 		const movieRes = await fetch(`${movieUrl}discover/movie?${makeQueryString(year)}`, options)
 		const data = await movieRes.json();
-		const moviesPromises = data.results.map(async (item: MovieItemType) => {
+		const moviesPromises = data.results.map(async (item: MovieItem) => {
 			const editorsRes = await fetch(`${movieUrl}movie/${item.id}/credits?language=en-US`, options)
 			const editorsData = await editorsRes.json()
 			const editors = editorsData.crew
-				.filter((editor: EditorItemType) => editor.known_for_department === 'Editing')
-				.map((editor: EditorItemType) => editor.original_name)
+				.filter((editor: CrewItem) => editor.known_for_department === 'Editing')
+				.map((editor: CrewItem) => editor.original_name)
 		
 			return {
 				editors,
