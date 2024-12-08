@@ -9,3 +9,5 @@ routesInit({ app })
 app.listen(port, () => {
 	console.log(`started listening on ${port}`)
 })
+
+export default app

@@ -20,7 +20,7 @@ export interface MovieItem {
 }
 
 export interface CrewItem {
-	original_name: string;
+	name: string;
 	known_for_department: string;
 }
 

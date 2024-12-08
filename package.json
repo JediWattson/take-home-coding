@@ -1,15 +1,23 @@
 {
 	"scripts": {
 		"start": "tsc && node -r dotenv/config dist/app.js",
-		"dev": "concurrently \"tsc --watch\" \"nodemon -r dotenv/config dist/app.js\""
+		"dev": "concurrently \"tsc --watch\" \"nodemon -r dotenv/config dist/app.js\"",
+		"test": "mocha"
 	},
 	"devDependencies": {
+		"@types/chai": "^5.0.1",
 		"@types/express": "^5.0.0",
+		"@types/mocha": "^10.0.10",
 		"@types/node": "^22.10.1",
+		"@types/sinon": "^17.0.3",
+		"chai": "^4.5.0",
 		"concurrently": "^9.1.0",
 		"dotenv": "^16.4.7",
 		"express": "^4.21.2",
+		"mocha": "^11.0.1",
+		"msw": "^2.6.7",
 		"nodemon": "^3.1.7",
+		"sinon": "^19.0.2",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.7.2"
 	}
