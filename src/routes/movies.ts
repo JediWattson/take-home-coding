@@ -8,6 +8,11 @@ const router = Router()
 export const getMoviesByYear = async (req: Request, res: Response) => {
 	try {
 		const year: string = req.params['year']
+		if (year.length !== 4 || !Number.isInteger(parseInt(year, 10))) {
+			res.send([])
+			return 
+		}
+
 		const movieRes = await fetch(
 			`${movieUrl}discover/movie?${makeMovieQueryString(year)}`, 
 			movieReqOptions

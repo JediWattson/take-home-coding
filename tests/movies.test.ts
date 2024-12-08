@@ -19,4 +19,19 @@ describe('App tests', () => {
 		const isMatch = mockRes.send.calledWith(movieMockRes)
 		expect(isMatch).to.be.true
 	})
+
+	it('Calls to movies with bad params and returns empty array', async () => {
+		const mockReq = {
+		  	method: 'GET',
+			params: { year: 'asd' }
+		};
+		const mockRes = {
+			json: sinon.spy(),
+			send: sinon.spy()
+		};
+
+		await getMoviesByYear(mockReq as any, mockRes as any)
+		const isMatch = mockRes.send.calledWith([])
+		expect(isMatch).to.be.true
+	})
 })
