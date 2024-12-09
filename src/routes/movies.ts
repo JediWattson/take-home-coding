@@ -9,7 +9,7 @@ export const getMoviesByYear = async (req: Request, res: Response) => {
 	try {
 		const year: string = req.params['year']
 		if (year.length !== 4 || !Number.isInteger(parseInt(year, 10))) {
-			res.send([])
+			res.sendStatus(404)
 			return 
 		}
 
@@ -50,6 +50,7 @@ export const getMoviesByYear = async (req: Request, res: Response) => {
 		res.send(movies)
 	} catch(err) {
 		console.error(err)
+		res.sendStatus(500) 
 	}
 }
 

@@ -20,18 +20,18 @@ describe('App tests', () => {
 		expect(isMatch).to.be.true
 	})
 
-	it('Calls to movies with bad params and returns empty array', async () => {
+	it('Calls to movies with bad params and 404', async () => {
 		const mockReq = {
 		  	method: 'GET',
 			params: { year: 'asd' }
 		};
 		const mockRes = {
-			json: sinon.spy(),
-			send: sinon.spy()
+			send: sinon.spy(),
+			sendStatus: sinon.spy()
 		};
 
 		await getMoviesByYear(mockReq as any, mockRes as any)
-		const isMatch = mockRes.send.calledWith([])
+		const isMatch = mockRes.sendStatus.calledWith(404)
 		expect(isMatch).to.be.true
 	})
 })
